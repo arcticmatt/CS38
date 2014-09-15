@@ -1,0 +1,160 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Set 5, Matt Lim}
+\begin{description}
+    \item[(a)]
+        Note that for $1(a)$ and $1(b)$, we will let the flow and capacity be 0
+        for each pair of vertices $u,v$ with $(u,v) \notin E$.
+        We will format the vertex-limited flow problem as a linear program in
+        the following way. Our original input will consist of the following.
+        \[ \textbf{maximize } \sum_{v \in V} f_{sv} - \sum_{v \in V} f_{vs} \]
+        \[ \textbf{such that} \]
+        \[ f_{uv} \leq c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ \sum_{v \in V} f_{vu} + \sum_{v \in V} f_{uv} \leq g(v) \text{ for each $u \in
+        V$} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        Turning this into standard form then gives us the following.
+        \[ \textbf{maximize } \sum_{v \in V} f_{sv} - \sum_{v \in V} f_{vs} \]
+        \[ \textbf{such that} \]
+        \[ f_{uv} + S_C = c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ \sum_{v \in V} f_{vu} + \sum_{v \in V} f_{uv} + S_G = g(v) \text{ for each $u \in
+        V$} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        \[ S_C, S_G \ge 0 \]
+        Now for a short explanation. The first two constraints ensure that the
+        flow satisfies the capacity constraint and flow conservation. The next
+        constraint satisfies the constraint given in the problem, and the last
+        two simply ensure that certain values are non-negative. Basically, all
+        the constraints except for the third one ensure we get a valid flow, and
+        the third one gives us what the problem wants. Then, with all
+        these constraints, we want to maximize the flow from $s$ to $t$.
+    \item[(b)]
+        Here is how we will format this problem as a linear program. Our
+        original input will consist of the following.
+        \[ \textbf{maximize } \sum_{e \text{ exiting $s$}} (c(e^*) + 1) \cdot
+        f(e) - f(e^*) \] \[ \textbf{such that} \]
+        \[ f_{uv} \leq c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        Turning this into standard form then gives us the following.
+        \[ \textbf{maximize } \sum_{e \text{ exiting $s$}} (c(e^*) + 1) \cdot
+        f(e) - f(e^*) \] \[ \textbf{such that} \]
+        \[ f_{uv} + S_C = c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        \[ S_C \ge 0 \]
+        Now for a short explanation. The constraints ensure that the
+        flow satisfies the capacity constraint and flow conservation. In other
+        words they ensure we get a valid flow. Now we must show that maximizing
+        what we maximize gives us a maximum flow and minimizes $f(e^*)$. The
+        latter part is easy; maximizing our function clearly minimizes $f(e^*)$,
+        since we are subtracting it. Now we must show that maximizing our
+        function gives us a max flow. Let the value of the flow we get by
+        maximizing our function be $f$, and let the value of the max flow be
+        $f_{max}$. $f > f_{max}$ clearly cannot happen because then $f_{max}$ wouldn't be the
+        max flow. Now we will show that $f < f_{max}$ cannot happen. So, assume
+        to the contrary that $f < f_{max}$. Let $FUNC =  \sum_{e \text{ exiting $s$}} (c(e^*) + 1) \cdot
+        f(e) - f(e^*) = A - B$. Now consider $FUNC$ for a flow of value $f_{max}$.
+        We have that we have increased $A$ by at least $c(e^*) + 1$, since the
+        flow must increase in increments of one. Then we have that $B$ decreases
+        by at most $c(e^*)$. So overall $FUNC$ increases by at least one. But
+        this is a contradiction because we said we were maximizing $FUNC$. Thus
+        we have that $f = f_{max}$, and thus that our linear program will give
+        us the maximum flow and minimize $f(e^*)$.
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Set 5, Matt Lim}
+\begin{description}
+    \item[(a)]
+        We will first formulate the Assignment Problem as a problem of finding
+        the maximum weight perfect matching in a bipartite graph,
+        $G = (L \cup R = V, E)$.  Let $i$ index $L$ and $j$ index $R$, with $v_i
+        \in L$ and $v_j' \in R$.
+        For all $e \in E$, let $X_e = 1$ if $e$ is selected, and $X_e = 0$
+        otherwise. Let $W_e$ be the weight of the edge $e$.
+        We will format this problem as a linear program as follows.
+        \[ \textbf{maximize } \sum_{e \in E} X_e W_e \]
+        \[ \textbf{such that} \]
+        \[ \sum_{e \text{ including $v$}} X_e = 1 \text{ for all $v \in V$} \]
+        \[ 0 \le X_e \le 1 \text{ for all $e \in E$} \]
+        Basically what we are doing is maximizing the total weight of all the
+        edges we pick. The first constraint says that each vertex has exactly one
+        edge attached to it selected, which means that the edges we select form a perfect
+        matching. This is akin to saying each ``agent'' is assigned to exactly one ``task.''
+        So overall, we are maximizing the weight of the assignment.
+
+        \vspace{5mm}
+
+        Now we will show that the constraint matrix is totally unimodular. So,
+        let us consider the constraint matrix $A$. Our constraint matrix will
+        have $2n$ rows and $n^2$ columns. The first $n$ rows will consist of
+        $v_1, v_2, \dots, v_i$ (the vertices in $L$) and the next $n$ rows will consist of
+        $v_1', v_2', \dots, v_j'$ (the vertices in $R$). The columns will represent
+        every possible edge, ordered $(v_1, v_1'), (v_1, v_2'), \dots, (v_2,
+        v_1'), (v_2, v_2'), (v_n, v_n')$. We have that each column has
+        at most two ones in it. This is because of our first constraint, the one
+        that said we only select one edge for each vertex, and because each edge
+        contains two vertices. Further, every cell of the matrix is either
+        zero or one, because of how we defined our constraint.
+        That is, every cell is zero or one because every vertex is included in
+        at most one selected edge, and because we either select an edge ($X_e =
+        1$) or don't select it ($X_e = 0$). We also have that swapping rows does not affect
+        if $A$ is unimodular. This is because it is a linear algebra theorem that says that
+        swapping the rows of a square matrix only changes the sign of the
+        determinant. It then clearly follows that swapping rows doesn't affect
+        unimodularity.
+
+        Now we will prove by induction that $A$ is unimodular.
+        First we will consider the base case. So, consider any submatrix of $A$
+        that has dimensions $1 \times 1$. We showed above that every cell of $A$
+        is either zero or one. And since the determinant of a $1 \times 1$
+        matrix is just the value of the cell, we have that every $1 \times 1$
+        submatrix of $A$ has determinant zero or one, and thus every $1 \times
+        1$ submatrix of $A$ is unimodular. Now we will do our inductive
+        assumption. So, assume that every $k \times k$ submatrix of
+        $A$, where $1 \le k \le i - 1$ is unimodular. Now we must show that every $i \times i$ submatrix of
+        $A$ is unimodular. So consider an arbitrary $(i - 1) \times (i - 1)$
+        submatrix $B$ of $A$. We will add a column $c$ and a row $r$ to $B$ to
+        form $C$. Now
+        we will consider three cases. The first case is when $c$ is made of all
+        zeroes. Then we have that the determinant of $C$ is zero (expand by
+        cofactors along $c$). So $C$ is unimodular. The second case is when $c$ is made of
+        all zeroes and one one. Here we can do the following. We can take the
+        row with the one in column $c$ and swap it with the newly added row $r$.
+        Then we have that the determinant of this new matrix is either $0$, $1$,
+        or $-1$. This is because the determinant of the top $(i - 1) \times (i -
+        1)$ submatrix is $0$, $1$, or $-1$, and by expanding by cofactors along
+        $c$
+        with our switched rows we have that the determinant of our new matrix is
+        the same as the determinant of the top $(i - 1) \times (i - 1)$
+        submatrix, except with a possible sign switch. The third and final case
+        is when $c$ is made up of all zeroes and two ones.
+    \item[(b)]
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Set 5, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\end{document}

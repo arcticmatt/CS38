@@ -1,0 +1,60 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Final, Matt Lim}
+Let $OPT$ be the set of elements covered by a \textit{maximum k-cover} - that is, the set
+with the maximum number of elements of $U$ that can be covered by $k$ of the
+subsets. Then, the greedy algorithm will be as follows. At each step, we will pick the set
+covering the largest number of remaining uncovered items of the set $OPT$. Now, we will show that
+this achieves an approximation ratio of $\frac{e}{e-1}$.
+
+Let $r_i$ be the number of the $OPT$ elements remaining after
+iteration $i$. This means $r_0 = |OPT|$. Then we claim that
+\[ r_i \leq (1 - \frac{1}{k}) \cdot r_{i-1}. \]
+The proof for this statement is as follows. We have
+that $k$ subsets cover $OPT$. This means that at each step, $k$ subsets
+cover the elements in $OPT$ we have not yet covered (the remaining ones).
+Thus, at each step, one of those $k$ subsets must cover at least a $\frac{1}{k}$
+fraction of those remaining elements. Then, using this claim, we have that
+\[ r_i \leq (1 - \frac{1}{k})^i \cdot |OPT| \]
+\[ r_k \leq (1 - \frac{1}{k})^k \cdot |OPT| \]
+\[ r_k \leq \frac{|OPT|}{e} \]
+So we have that, after $k$ iterations of our algorithm (which means we have
+picked $k$ sets) there are less than or equal to $\frac{|OPT|}{e}$ elements
+remaining of set $OPT$. This means that $c$, the number of elements we have
+covered in $OPT$, is bounded below as follows:
+\[ c \geq |OPT| - \frac{|OPT|}{e} \]
+\[ c \geq |OPT|(1 - \frac{1}{e}) \]
+\[ c \geq |OPT|(\frac{e-1}{e}) \]
+\[ c(\frac{e}{e-1}) \geq |OPT| \]
+Thus we get our approximation ratio of $\frac{e}{e-1}$.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Final, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Final, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 4, CS38 Final, Matt Lim}
+\begin{description}
+    \item[(a)]
+    \item[(b)]
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\end{document}

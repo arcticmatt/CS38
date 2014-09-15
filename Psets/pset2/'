@@ -1,0 +1,218 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Set 2, Matt Lim}
+\begin{description}
+    \item[(a)]
+        So we begin with a set of positive integers $S = \{l_1,l_2, \cdots,
+        l_k\}$
+        satisfying
+        \[\sum_{i=1}^k 2^{-l_i} \le 1,\]
+        .
+        We will let $n$ be the maximum integer in $S$. Our algorithm will be as follows:
+
+        \begin{enumerate}
+            \item We will sort $S$ in increasing order.
+            \item We will construct a full and complete binary tree of height
+                $n$. Each node is initially colored white.
+            \item For each $l_i \in S$, in increasing order, we will traverse,
+                from the root, $l_i$ steps, then delete all the nodes under the
+                node we reach. We will color each traversed node black.
+            \item We will delete all unvisited (white) nodes
+        \end{enumerate}
+
+        We will now prove that this algorithm works.
+        So, let us consider our set $S$. For any integer $l_i \in S$, the
+        maximum number of times it may appear is $2^{l_i}$. Now let us consider
+        $n$, the maximum integer in $S$. We have that $n$ can appear a maximum
+        of $2^n$ times. And since $n$ is the largest number in $S$, this means
+        that $S$ contains no more than $2^n$ ``slots.'' Now, consider the
+        following. Each $l_i \in S$ takes up $2^{n-l_i}$ ``slots'' of $S$. This
+        gives us the following:
+        \[ \sum_{i=1}^k 2^{n-l_i} \le 2^n \]
+        \[ \sum_{i=1}^k \frac{2^{n-l_i}}{2^n} \le 1 \]
+        \[ \sum_{i=i}^k 2^{-l_i} \le 1 \]
+        So our proof is complete.
+    \item[(b)]
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Set 2, Matt Lim}
+\begin{description}
+    \item[(a)]
+        We will first prove that \textit{graphic matroids} are indeed matroids.
+        So, given an undirected graph $G = (V,E)$, we will prove that the
+        \textit{graphic matroid} $M_G = (S_G, I_G)$ is a matroid. We will let
+        $S_G$ be defined as $E$, the set of edges of $G$. We will then define
+        $I_G$ in the following way: if $A$ is a subset of $E$, then $A \in I_G$
+        if and only if $A$ is acyclic. In other words, a set of edges $A$ is
+        independent if and only if the subgraph $G_A = (V, A)$ forms a forest.
+        So we have that the independent sets of our \textit{graphic matroid} are
+        all subsets of the edges of $G$ that are forests. Now, onto the proof.
+
+        We will first consider the first axiom. By definition, a forest includes
+        a graph of a set of vertices that has no edges. So, $I_G$ contains the
+        empty set of edges. Next, the second axiom. We have that if you remove
+        an edges from a forest, you still have a forest, since removing edges
+        from an acyclic set cannot create cycles. In other words, a subset of a
+        forest is a forest. So we have that if $A \in I_G$ then every subset $B
+        \subseteq A \in I_G$.
+
+        Now, onto the third axiom. Let $G_A = (V,A)$ and
+        $G_B = (V,B)$ be forests of $G$ with $|B| > |A|$, i.e. $A$ and $B$ are
+        acyclic sets of edges, with $B$ having more edges than $A$. We now claim
+        that a forest $F = (V_F,E_F)$ has $|V_F| - |E_F|$ trees. Let us prove
+        this claim. Suppose that $F$ is made up of $t$ trees, with the $i$th
+        tree containing $v_i$ vertices and $e_i$ edges. Then we get the
+        following (note that the second statement follows from Theorem B.2 on
+        page 1174 of CLRS):
+        \[ |E_F|= \sum_{i=1}^t e_i \]
+        \[ = \sum_{i=1}^t (v_i - 1) \]
+        \[ = \sum_{i=1}^t v_i - t \]
+        \[ = |V_F| - t \]
+        This then implies that $t = |V_F| - |E_F|$. Thus we have that $G_A$
+        contains $|V| - |A|$ trees, and forest $G_B$ contains $V|-|B|$ trees.
+
+        Since $G_B$ has fewer trees than $G_A$, $G_B$ has to contain some tree
+        $T$ whose vertices are in two different trees in $G_A$. Then, since
+        $T$ is connected, it must contain an edge $(u,v)$ such that vertices $u$
+        and $v$ are in different trees in $G_A$. Since the edge $(u,v)$ connects
+        vertices in two different trees in $G_A$, adding the edge $(u,v)$ to
+        $G_A$ does not create a cycle. Thus, $M_G$ satisfies the third axiom,
+        and we can conclude that $M_G$ is a matroid.
+
+        \vspace{5mm}
+        We will now prove that \textit{matric matroids} are indeed matroids. Let
+        $M$ be the matrix we are representing with our \textit{matric matroid}.
+        So now we have that $I$ are all subsets of column vectors of $M$ that are
+        linearly independent and $E$ is the set of all column vectors. Now we must
+        prove that the three axioms hold.
+
+        We will first consider the first axiom. We have that the empty set
+        is a linearly empty set, and that it is a subset of any set. So axiom
+        one holds. Now we will consider axiom two. This is fairly trivial; if
+        you take away a column vector from set of independent column vectors, the
+        new set will
+        still be linearly independent (and thus in $I$). In other words, taking
+        away column vectors from a set in $I$ still results in a linearly independent
+        set of column vectors. Thus, if $A \in I$, then every subset $B \subseteq A$ is
+        also in $I$, and the second axiom holds. Finally, we will consider the
+        third axiom. \textbf{TODODODODODDODODODDODOD}
+        \newpage
+    \item[(b)]
+        Let $M = I$ be our matroid and $E$ be our universe. Then we can give the
+        following greedy algorithm:
+
+        \vspace{5mm}
+        \noindent \textbf{GREEDY}$(I,E)$
+        \begin{enumerate}
+            \item $A = \emptyset$
+            \item Sort the elements of $E$ into monotonically decreasing order
+                by their integer weights
+            \item \textbf{for} each $x \in E$, taken in monotonically decreasing
+                order by integer weight
+            {\setlength\itemindent{25pt} \item \textbf{if} $A \cup \{x\} \in
+            I$ }
+            {\setlength\itemindent{50pt} \item $A = A \cup \{x\}$ }
+            \item \textbf{return} $A$
+        \end{enumerate}
+
+        We will now prove that this algorithm runs in time $O(|E|\text{log}|E|)$
+        plus $O(|E|)$ calls to a procedure that determines whether or not a
+        given set $A$ is independent. Line 2, the sorting, takes
+        $O(|E|\text{log}|E|)$. Then we have that line 4 executes exactly $|E|$
+        times, which means that line 4, which checks to see if the set
+        $A \cup \{x\}$ is independent, happens order $|E|$ times. Thus
+        we have that this algorithm runs in time $O(|E|\text{log}|E|)$
+        plus $O(|E|)$ calls to a procedure that determines whether or not a
+        given set $A$ is independent.
+
+        We must now prove that this algorithm returns an optimal, independent
+        set. The independent part is easy; line 4 checks before adding each
+        element that the resulting set is independent. So the set we return must
+        be independent. This is an inductive argument, where the base case is
+        the empty set, which is independent ($A$ starts as empty). In other
+        words, we start with an independent empty set, and the for-loop
+        maintains the sets independent through each step. So our set is always
+        independent by induction. Now we must only prove correctness. To do so,
+        we will use some of the corollaries and lemmas in the book. All used
+        corollaries and lemmas can be found on pages 441 and 442 of CLRS. Now,
+        onto the proof.
+
+        By Corollary 16.9, the elements that our \textbf{GREEDY} algorithm skips initially
+        (because they are not extensions of $\emptyset$) are no longer relevant
+        at all, since they can never be useful (they will never be added to
+        $A$). Lemma 16.7, which says that matroids exhibit the greedy-choice
+        property, tells us that the algorithm never makes an error by adding $x$
+        to $A$, since there exists an optimal subset containing $x$. Lastly, we
+        have that Lemma 16,10, which says that matroids exhibit the
+        optimal-substructure property, tells us that the remaining problem
+        (after adding $x$) is to find an obtimal subset in the matroid $M'$,
+        $M'$ being the contraction of $M$ by $x$. After our \textbf{GREEDY}
+        algorithm sets $A = \{x\}$, we can view its remaining steps as acting in
+        the matroid $M' = I'$, where
+        \[ I' = \{ B \subseteq E - \{x\} : B \cup \{x\} \in I \} \]
+        and the new universe is
+        \[ E' = \{ y \in E : \{x,y\} \in I \}
+    \item[(c)]
+    \item[(d)]
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Set 2, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 4, CS38 Set 2, Matt Lim}
+Let $P$ be the set of $m$ pairs of vertices. Let \textbf{make-set}$(x)$,
+\textbf{union}$(x,y)$, \textbf{link}$(x,y)$ (used in \textbf{union}), and
+\textbf{find-set}$(x)$ be as defined on page 571 of CLRS. Basically, we are
+using
+link-by-rank with path compression as shown in lecture.
+The pseudocode for this algorithm can be given as follows:
+\vspace{5mm}
+
+\noindent \textbf{LCA}(vertex $u$)
+\begin{enumerate}
+    \item \textbf{make-set}$(u)$
+    \item \textbf{find-set}$(u).ancestor = u$
+    \item \textbf{for} each child $v$ of $u$ in $T$
+    {\setlength\itemindent{25pt} \item \textbf{LCA}($v$) }
+    {\setlength\itemindent{25pt} \item \textbf{union}$(u,v)$ }
+    {\setlength\itemindent{25pt} \item \textbf{find-set}$(u).ancestor = u$ }
+    \item $u.color = black$
+    \item \textbf{for} each node $v$ such that $\{u,v\} \in P$
+    {\setlength\itemindent{25pt} \item \textbf{if} $v.color == black$ }
+    {\setlength\itemindent{50pt} \item output ``The least common ancestor of $u$
+        and $v$ is \textbf{find-set}$(v).ancestor$`` }
+\end{enumerate}
+
+We will now prove that this algorithm runs in time $O((n + m)\text{log}^*n)$.
+The algorithm is basically just
+building a Union-Find data structure. From the lecture slides, we have
+that ``Starting from an empty data structure, link-by-rank with path compression
+performs any intermixed sequence of $m \ge n$ \textbf{find-set} and $n-1$
+\textbf{union} operations in $O(m \text{log}^*n)$ time. But this is basically exactly
+what our algorithm does. It does order $n + m \ge n$ number \textbf{find-set}
+operations; $n-1$ occur in line 6 and $k \le m$ occur in line 10.
+We can see that the $n-1$ \textbf{union}
+operations occur in line 5, as every node except for the root node has
+\textbf{union} done on it. Thus we can conclude that the overall running time
+is $O((n+m) \text{log}^*n)$.
+
+Now for the proof of correctness.
+
+\newpage
+\end{document}

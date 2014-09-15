@@ -1,0 +1,184 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Final, Matt Lim}
+The greedy algorithm will be as follows. At each step, we will pick the set
+covering the largest number of remaining uncovered items. Now, we will show that
+this achieves an approximation ratio of $\frac{e}{e-1}$.
+
+Let $OPT$ be the cardinality of the set of elements covered by a
+\textit{maximum k-cover} - that is, the cardinality of the set
+with the maximum number of elements of $U$ that can be covered by $k$ of the
+subsets. Let $r_i$ be the number of the $OPT$ elements remaining (not yet
+covered) after iteration $i$; that is, if $x$ elements have been covered after
+iteration $j$, then $r_j = OPT - x$. This means $r_0 = OPT$. Then we claim that
+\[ r_i \leq (1 - \frac{1}{k}) \cdot r_{i-1}. \]
+The proof for this statement is as follows. We have
+that $k$ subsets cover $OPT$ elements. Then, at each step, $k$ subsets cover
+all remaining elements (out of the $OPT$ elements, not the universe).
+Thus, at each step, at least one of those $k$ subsets must cover at least a $\frac{1}{k}$
+fraction of those remaining elements out of the $OPT$ elements. That is, at
+each step, there
+must exist some subset that covers a fraction $\frac{1}{k}$ (at least) of the $r_{i-1}$
+elements remaining to be covered. This basically means we can cover at least
+$\frac{r_{i-1}}{k}$ uncovered elements at each step $i$. And since our
+greedy algorithm picks the set covering the largest number of remaining
+uncovered items, we will cover at least $\frac{r_{i-1}}{k}$ uncovered remaining
+elements at each step $i$. Then, using this claim, we have that
+\[ r_i \leq (1 - \frac{1}{k})^i \cdot OPT \]
+\[ r_k \leq (1 - \frac{1}{k})^k \cdot OPT \]
+\[ r_k \leq \frac{OPT}{e} \]
+So we have that, after $k$ iterations of our algorithm (which means we have
+picked $k$ sets) there are less than or equal to $\frac{OPT}{e}$ elements
+remaining of the $OPT$ number of elements that are possible to be covered with
+$k$ subsets. This means that $c$, the number of elements we have
+covered out of the $OPT$ possible, is bounded below as follows:
+\[ c \geq OPT - \frac{OPT}{e} \]
+\[ c \geq OPT(1 - \frac{1}{e}) \]
+\[ c \geq OPT(\frac{e-1}{e}) \]
+\[ c(\frac{e}{e-1}) \geq OPT \]
+Thus we get our approximation ratio of $\frac{e}{e-1}$.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Final, Matt Lim}
+Here is our algorithm. ADD BACKTRACKING
+
+\vspace{5mm}
+
+\textbf{Maximum-matching-tree}$(G = (V,E))$
+\begin{enumerate}
+    \item Root the tree $G$ at a node $r$
+    \item $S = \varnothing$
+    \item $OPT_{in}[v] = OPT_{out}[v]$ for all $v \in V$
+    \item \textbf{foreach} node $v$ of $G$ in postorder
+    {\setlength\itemindent{25pt} \item \textbf{if} $u$ is a leaf }
+    {\setlength\itemindent{50pt} \item \textbf{foreach} child edge $(u,w)$ }
+    {\setlength\itemindent{75pt} \item int $new = 1 + OPT_{out}[w] +
+        \sum_{v \in \text{children($u$), $v \neq w$}} max\{OPT_{out}[v],
+        OPT_{in}[v]\}$ }
+    {\setlength\itemindent{75pt} \item \textbf{if} $new > OPT_{in}[u]$ }
+    {\setlength\itemindent{100pt} \item $OTP_{in}[u] = new$ }
+    {\setlength\itemindent{100pt} \item edge $e = (u,w)$ }
+    {\setlength\itemindent{50pt} \item $OPT_{out}[u] =
+        \sum_{v \in \text{children($u$)}} max\{OPT_{in}[v], OPT_{out}[v]$\} }
+    {\setlength\itemindent{50pt} \item \textbf{if} $OPT_{in}[u] > OPT_{out}[u]$ }
+    {\setlength\itemindent{75pt} \item $B[u] = e$ }
+    {\setlength\itemindent{75pt} \item \textbf{foreach} child $v$ of $u$ }
+    {\setlength\itemindent{100pt} \item $B[v] = 0$ }
+    {\setlength\itemindent{50pt} \item \textbf{else} }
+    {\setlength\itemindent{75pt} \item $B[u] = 0$ }
+\end{enumerate}
+
+Now we will show that our algorithm works. We can see that we visit the nodes in
+postorder. This is to ensure a node is visited after all its children. For each
+node $u$, we consider what happens, each child edge $e$ at a time, if we add
+$e$ to the matching and what happens if we don't add any of its child
+edges to the matching. The former part occurs in lines 7-9. In line 7, we
+consider adding an edge $(u,w)$ to the matching. This would mean that our matching
+cardinality would go up 1, that $w$ could not have any of its child edges in the
+matching, and the other children of $u$ (not $w$) can have one of their child
+edges in the matching or not. After calculating each such possibility (one
+possibility for each child edge $(u,w)$) we make it the new value of
+$OPT_{in}[u]$ if it is greater than the current value. Doing this in the
+for-loop ensures we get the maximum score for including one child edge of $u$.
+The latter part occurs in line 11, where we calculate the maximum score of when
+we don't include any of $u$'s child edges in the matching. In this way, we
+compute the value of a maximum matching for the subtrees rooted at each node (it
+will be the maximum of $OPT_{in}$ and $OPT_{out}$).
+Thus, we compute the value of a maximum matching for a tree rooted at $r$, which
+is just the value of the maximum matching for the whole tree.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Final, Matt Lim}
+Here is the pseudo-code of our divide-and-conquer algorithm. Let the size of the
+list be $n$. Note that we will let the ``value'' of a list be the sum of its elements.
+
+\vspace{5mm}
+\textbf{Maximum-sum-subsequence}(List $L$)
+\begin{enumerate}
+    \item First, we will split the list into two lists of size $n/2$ each.
+    \item We will then recursively find the maximum sum subsequence and the
+        bounding indices $i,j$ of such subsequences of each of those lists.
+    \item Finally, we will calculate the maximum sum subsequence across the
+        split. We will do this as follows. Let the two lists be $A = a_1, a_2,
+        \dots, a_k$ and $B = a_{k+1}, a_{k+2}, \dots, a_{2k}$. Suppose the
+        maximum sum subsequence in $A$ is given by the indices $i$ and $j$,
+        where $i \leq j$, $1 \leq i$, and $j \leq k$ (so $A_{max} = \sum_{i \leq m \leq j}
+        a_m$ is the value of the maximum sum subsequence in $A$). Also suppose the
+        maximum sum subsequence in $B$ is given by the indices $i'$ and $j'$,
+        where $i' \leq j'$, $k+1 \leq i$, and $j' \leq 2k$ (so $B_{max} =
+        \sum_{i' \leq m \leq j'} a_m$ is the value of the maximum sum subsequence in $B$).
+        Let $C_{max}$ be the value of the maximum sum subsequence across the
+        split.  Then, we will set values $C_{max}, i'', j''$ to correspond to the return
+        value of \textbf{Helper}($A + B$, $j$, $i'$, $A_{max}$, $B_{max}$). We
+        will then calculate the max of $A_{max}, B_{max}, C_{max}$; if $A_{max}$
+        is the max, we will return $i,j$, if $B_{max}$ is the max, we will return
+        $i',j'$, and if $C_{max}$ is the max, we will return $i'',j''$,
+
+\end{enumerate}
+
+\vspace{5mm}
+
+\textbf{Helper}(List $L$, int $i$, int $j$, int $lMax$, int $rMax$)
+\begin{enumerate}
+    \item int $curr = max = 0$
+    \item int $begin = end = beginMax = endMax = i+1$
+    \item \textbf{for} $i+1 \leq k \leq j-1$
+    {\setlength\itemindent{25pt} \item \textbf{if} $curr + L_k > max$ }
+    {\setlength\itemindent{50pt} \item $max = curr + L_k$ }
+    {\setlength\itemindent{50pt} \item $curr = curr + L_k$ }
+    {\setlength\itemindent{50pt} \item $beginMax = begin$ }
+    {\setlength\itemindent{50pt} \item $endMax = k$ }
+    {\setlength\itemindent{25pt} \item \textbf{elif} $curr + L_k > 0$ }
+    {\setlength\itemindent{50pt} \item $curr = curr + L_k$ }
+    {\setlength\itemindent{25pt} \item \textbf{else} }
+    {\setlength\itemindent{50pt} \item $curr = 0$ }
+    {\setlength\itemindent{50pt} \item $begin = end = k+1$ }
+    \item \textbf{if} $beginMax == i + 1$ and $lMax > 0$
+    {\setlength\itemindent{25pt} \item $max = max + lMax$ }
+    \item \textbf{if} $endMax == j - 1$ and $rMax > 0$
+    {\setlength\itemindent{25pt} \item $max = max + rMax$ }
+    \item return $max, beginMax, endMax$
+\end{enumerate}
+
+\vspace{5mm}
+We will now show that this algorithm uses $O(n\log n)$ operations, where here
+an ``operation'' includes arithmetic operations on integers of magnitude $O(n|\max_i a_i|)$.
+We can see that our algorithm breaks the problem up into two subproblems of half
+the size, and calculating the maximum sum subsequence across a split takes linear
+time. Thus our running time is given by
+\[ T(n) = 2 \cdot T(\frac{n}{2}) + O(n). \]
+We will now explain why calculating the maximum sum subsequence across a split
+takes linear time. This is fairly simple. We can see above in the helper
+function that all we must do is iterate through the elements between the max sum
+subsequences of either side. In other words, we iterate through at most $n$
+elements at the top level. And inside this for-loop, we do a constant number of
+operations. So clearly the time for calculating the maximum sum subsequence across a
+split takes linear time. Thus, from the slides, we have that
+\[ T(n) = 2 \cdot T(\frac{n}{2}) + O(n) \implies T(n) = O(n \log n). \]
+
+PROOF OF CORRECTNESS
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 4, CS38 Final, Matt Lim}
+\begin{description}
+    \item[(a)]
+    \item[(b)]
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\end{document}

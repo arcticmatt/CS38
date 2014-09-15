@@ -1,0 +1,91 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Set 2, Matt Lim}
+\begin{description}
+    \item[(a)]
+        So we begin with a set of positive integers $S = \{l_1,l_2, \cdots,
+        l_k\}$
+        satisfying
+        \[\sum_{i=1}^k 2^{-l_i} \le 1,\]
+        .
+        We will let $n$ be the maximum integer in $S$. Our algorithm will be as follows:
+
+        \begin{enumerate}
+            \item We will sort $S$ in increasing order.
+            \item We will construct a full and complete binary tree of height
+                $n$. Each node is initially colored white.
+            \item For each $l_i \in S$, in increasing order, we will traverse,
+                from the root, $l_i$ steps, then delete all the nodes under the
+                node we reach. We will color each traversed node black.
+            \item We will delete all unvisited (white) nodes
+        \end{enumerate}
+
+        We will now prove that this algorithm works.
+        So, let us consider our set $S$. For any integer $l_i \in S$, the
+        maximum number of times it may appear is $2^{l_i}$. Now let us consider
+        $n$, the maximum integer in $S$. We have that $n$ can appear a maximum
+        of $2^n$ times. And since $n$ is the largest number in $S$, this means
+        that $S$ contains no more than $2^n$ ``slots.'' Now, consider the
+        following. Each $l_i \in S$ takes up $2^{n-l_i}$ ``slots'' of $S$. This
+        gives us the following:
+        \[ \sum_{i=1}^k 2^{n-l_i} \le 2^n \]
+        \[ \sum_{i=1}^k \frac{2^{n-l_i}}{2^n} \le 1 \]
+        \[ \sum_{i=i}^k 2^{-l_i} \le 1 \]
+        So our proof is complete.
+    \item[(b)]
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Set 2, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Set 2, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 4, CS38 Set 2, Matt Lim}
+Let $P$ be the set of $m$ pairs of vertices. Let \textbf{make-set}$(x)$ create
+a new set whose only member and representative is $x$. We require that $x$ not
+be in some other set already. Let \textbf{union}$(x,y)$ unite the dynamic sets
+that contain $x$ and $y$, say $S_x$ and $S_y$, into a new set that is the union
+of these two sets. We assume that the two sets are disjoint prior to the
+operation. Let the new representative of this union be the representative of
+$S_y$ \textbf{(????)}. Let \textbf{find-set}$(x)$ return a pointer to the
+representative of the unique set containing $x$.
+The pseudocode for this algorithm can be given as follows:
+\vspace{5mm}
+
+\noindent \textbf{LCA}(vertex $u$)
+\begin{enumerate}
+    \item \textbf{make-set}$(u)$
+    \item \textbf{find-set}$(u).ancestor = u$
+    \item \textit{for} each child $v$ of $u$ in $T$
+    {\setlength\itemindent{25pt} \item \textbf{LCA}($v$) }
+    {\setlength\itemindent{25pt} \item \textbf{union}$(u,v)$ }
+    {\setlength\itemindent{25pt} \item \textbf{find-set}$(u).ancestor = u$ }
+    \item $u.color = black$
+    \item \textit{for} each node $v$ such that $\{u,v\} \in P$
+    {\setlength\itemindent{25pt} \item \textit{if} $v.color == black$ }
+    {\setlength\itemindent{50pt} \item output ``The least common ancestor of $u$
+        and $v$ is \textbf{find-set}$(v).ancestor$`` }
+\end{enumerate}
+
+We will now prove that this algorithm runs in time $O(m + n\text{log}^*n)$.
+We can see in line 8 that we loop through every pair in $P$, since that for-loop
+is called for every vertex. And since their are $m$ pairs of vertices, this is
+where the $m$ comes from. Now, onto the next part. For every vertex,
+\newpage
+\end{document}

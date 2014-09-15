@@ -1,0 +1,81 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Set 5, Matt Lim}
+\begin{description}
+    \item[(a)]
+        Note that for $1(a)$ and $1(b)$, we will let the flow and capacity be 0
+        for each pair of vertices $u,v$ with $(u,v) \notin E$.
+        We will format the vertex-limited flow problem as a linear program in
+        the following way. Our original input will consist of the following.
+        \[ \textbf{maximize } \sum_{v \in V} f_{sv} - \sum_{v \in V} f_{vs} \]
+        \[ \textbf{such that} \]
+        \[ f_{uv} \leq c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ \sum_{v \in V} f_{vu} + \sum_{v \in V} f_{uv} \leq g(v) \text{ for each $u \in
+        V$} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        Turning this into standard form then gives us the following.
+        \[ \textbf{maximize } \sum_{v \in V} f_{sv} - \sum_{v \in V} f_{vs} \]
+        \[ \textbf{such that} \]
+        \[ f_{uv} + S_C = c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ \sum_{v \in V} f_{vu} + \sum_{v \in V} f_{uv} + S_G = g(v) \text{ for each $u \in
+        V$} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        \[ S_C, S_G \ge 0 \]
+        Now for a short explanation. The first two constraints ensure that the
+        flow satisfies the capacity constraint and flow conservation. The next
+        constraint satisfies the constraint given in the problem, and the last
+        two simply ensure that certain values are non-negative. Then, with all
+        these constraints, we want to maximize the flow from $s$ to $t$.
+    \item[(b)]
+        Here is how we will format this problem as a linear program. Our
+        original input will consist of the following. Note that we will let
+        $F_{max}$ be the value of the maximum flow from $s$ to $t$.
+        \[ \textbf{minimize } f(e^*) \]
+        \[ \textbf{such that} \]
+        \[ f_{uv} \leq c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ \sum_{v \in V} f_{sv} - \sum_{v \in V} f_{vs} = F_{max} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        Turning this into standard form then gives us the following.
+        \[ \textbf{minimize } f(e^*) \]
+        \[ \textbf{such that} \]
+        \[ f_{uv} + S_C = c(u,v) \text{ for all $u,v \in V$} \]
+        \[ \sum_{v \in V} f_{vu} = \sum_{v \in V} f_{uv} \text{ for each $u \in
+        V - \{s,t\}$} \]
+        \[ \sum_{v \in V} f_{sv} - \sum_{v \in V} f_{vs} = F_{max} \]
+        \[ f_{uv} \ge 0 \text{ for each $u,v \in V$} \]
+        \[ S_C \ge 0 \]
+        Now for a short explanation. The first two constraints ensure that the
+        flow satisfies the capacity constraint and flow conservation. The next
+        constraint makes sure that the flow value is indeed maximum, and the last
+        two simply ensure that certain values are non-negative. Then, with all
+        these constraints, we want the minimize the flow across edge $e^*$.
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Set 5, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Set 5, Matt Lim}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\end{document}

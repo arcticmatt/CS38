@@ -1,0 +1,276 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Set 6, Matt Lim}
+Given a directed graph $G = (V,E)$, we will define our three matroids as follows
+(over the universe $E$). $M_1$
+will be the graphic matroid for $G$.
+$M_2$ will contain all sets of edges such
+that, for every set, every vertex that is part of an edge (an edge in the set)
+has at most one edge going out. $M_2$ will also contain all subsets of every such set. $M_3$
+will contain all sets of edges such that, for every set, every vertex that is part of an edge
+(an edge in the set) has at most one edge going in. $M_3$ will also contain all
+subsets of every such set.
+
+We will now prove that each of these matroid is indeed a matroid. Note that we
+will not provide a proof for $M_1$ since we proved that graphic matroids are
+matroids in problem set 2. So for $M_1$, we just need to give a polynomial-time
+procedure that determines whether or not a set $A \subseteq E$ is an independent
+set. To do this, it suffices to check if the graph formed by the edges
+in $A$ and the vertices included in those edges is acyclic, since if that graph
+is acyclic that means the
+edges form a forest, and that $A$ is an independent set of $M_1$.
+To do this, we can see if there are any strongly connected components with
+greater or equal to two vertices in the
+graph formed by the edges of $A$ and the vertices in those edges. If there is,
+that means that $A$ has a cycle, and that it shouldn't be in the matroid; if
+there is not, $A$ is an independent set since it is acyclic. We covered an algorithm for finding
+SCCs in class (it's also in the book, page 617)
+and it was polynomial time. To be safe we could also check each
+vertex to make sure there are no self cycles, which is also polynomial.
+
+So, we will first prove that $M_2$ is a matroid. So,
+we will first consider the first axiom, that $M_2$ contains the empty set. This
+is trivially true, since the empty set is a subset of every set. Also, having
+zero edges in a set meets the requirement that every vertex that is part of an
+edge has at most one edge going out, since no vertices will be part of any edges.
+Now, on to the second axiom. This is true by construction, since we said that
+$M_2$ contains all subsets of the described sets. It is also true because if you
+take away an edge, you are not adding any outgoing edges to any vertices. So the
+second axiom holds. Finally, we consider the third axiom. So, let $A$ and $B$ be
+subsets in $M_2$, with $|B| > |A|$. Now, note that the edges in $A$ result in exactly $|A|$
+vertices having one outgoing edge, since every edge added to $A$ adds one
+outgoing edge to a new vertex. Similarly, the edges in $B$ result in exactly
+$|B|$ vertices having one outgoing edge. Then, since $|B| > |A|$, we have that
+$B$ has an outgoing edge $e$ from a vertex $v$ that does not have any outgoing edge
+in $A$. So, we can add this edge to $A$, making $A \cup \{e\}$, and have the
+resulting set still have at most one outgoing edge from every vertex. Thus $A
+\cup \{e\} \in M_2$ and the third axiom holds. Now we will give a
+polynomial-time procedure that determines whether or not a set $A \subseteq E$ is an
+independent set. This can be done by iterating through all the edges in $A$, and
+seeing if any vertices appear at least twice on the left side of the
+edges (assuming an edge $(v_1,
+v_2)$ means there is an outgoing edge from $v_1$ to $v_2$). If at least one
+vertex does, then $A$ is not an independent set in $M_2$. For example, if $A$
+includes $(v_1, v_2), (v_1, v_3)$, $v_1$ appears on the left side of edges
+twice, and thus has two outgoing edges, so $A$ is not in $M_2$. This is clearly
+polynomial since we are just iterating through all the edges in $A$ and
+considering two vertices for each edge.
+
+Now we will prove that $M_3$ is a matroid. So,
+we will first consider the first axiom, that $M_3$ contains the empty set. This
+is trivially true, since the empty set is a subset of every set. Also, having
+zero edges in a set meets the requirement that every vertex that is part of an
+edge has at most one edge going in, since no vertices will be part of any edges.
+Now, on to the second axiom. This is true by construction, since we said that
+$M_3$ contains all subsets of the described sets. It is also true because if you
+take away an edge, you are not adding any ingoing edges to any vertices. So the
+second axiom holds. Finally, we consider the third axiom. So, let $A$ and $B$ be
+subsets in $M_3$, with $|B| > |A|$. Now, note that the edges in $A$ result in exactly $|A|$
+vertices having one ingoing edge, since every edge added to $A$ adds one
+ingoing edge to a new vertex. Similarly, the edges in $B$ result in exactly
+$|B|$ vertices having one ingoing edge. Then, since $|B| > |A|$, we have that
+$B$ has an ingoing edge $e$ incident to a vertex $v$ that does not have any ingoing edge
+in $A$. So, we can add this edge to $A$, making $A \cup \{e\}$, and have the
+resulting set still have at most one ingoing edge from every vertex. Thus $A
+\cup \{e\} \in M_3$ and the third axiom holds. Now we will give a
+polynomial-time procedure that determines whether or not a set $A \subseteq E$ is an
+independent set. This can be done by iterating through all the edges in $A$, and
+seeing if any vertices appear at least twice on the right side of the
+edges (assuming an edge $(v_1,
+v_2)$ means there is an ingoing edge into $v_2$). If at least one
+vertex does, then $A$ is not an independent set in $M_2$. For example, if $A$
+includes $(v_1, v_2), (v_3, v_2)$, $v_2$ appears on the right side of edges
+twice, and thus has two ingoing edges, so $A$ is not in $M_3$. This is clearly
+polynomial since we are just iterating through all the edges in $A$ and
+considering two vertices for each edge.
+
+So we have proved that $M_1$, $M_2$, and $M_3$ are indeed matroids, and given a
+polynomial-time procedure for each one that determines whether or not a set
+$A \subseteq E$ is an independent set. Now we will
+give a reduction from a NP-complete problem to the problem of determining
+whether there exists an independent set of cardinality at least $k$ in the
+intersection of the three matroids. The NP-complete problem we will reduce from
+is Hamilton path in a directed graph. So, let us begin. The reduction function
+will take a directed graph $G = (V,E)$ and map it to the three matroids shown
+above, as well as an integer $k = |V| - 1$. So, $G = (V,E)$ will get mapped to
+$(M_1, M_2, M_3, k)$, where $k = |V| - 1$. Now we must show that yes maps to yes
+and no maps to no.
+
+First we will show that yes maps to yes. So, assume that there is a Hamilton
+path in $G = (V,E)$. Now we must show that there is an independent set of cardinality $k =
+|V| - 1$ or greater in the intersection of $M_1,M_2,M_3$. Let us begin. $M_1$ clearly contains the Hamilton
+path because the Hamilton path contains no cycles, and thus is a tree/forest.
+$M_2$ contains the Hamilton path because every vertex on the path, by
+definition, has exactly one edge going in and exactly one edge going out, except
+for the starting and finishing vertex. This means that every vertex along that
+path has at most one outgoing edge. By similar logic, $M_3$ contains the
+Hamilton path, since every vertex along the Hamilton path has at most one
+ingoing edge. Then, since the number of edges along the Hamilton path must be
+$|V| - 1$ (by definition of a Hamilton path),
+and $k = |V| - 1$, we have that there exists an independent set
+in the intersection of $M_1,M_2,M_3$ of cardinality at least $k$, which will be
+the edges that make up the Hamilton path.
+
+Now we will show that no maps to no. So, assume that there is not a Hamilton
+path in $G = (V,E)$. Now we must show that there is not an independent set of
+cardinality $k = |V| - 1$ or greater in the intersection of $M_1, M_2, M_3$. Assume to the
+contrary that there exists an independent set in the intersection of
+$M_1,M_2,M_3$ that has cardinality at least $k$. This means there is an
+independent set in the intersection with the cardinality $k$. Let us consider
+the edges in this set.  We have that
+these edges don't create a cycle, because they are in $M_1$. We also have that
+there are $|V|$ vertices covered, because we have $|V| - 1$ edges, no cycles, and a
+maximum of $|V|$ vertices. And since having $|V| - 1$ edges and no cycles hits
+at least $|V|$ vertices, we cover $|V|$ vertices. Further, we have that every
+vertex covered by the edges in this set has at most one edge going in and one edge going out.
+This, along with the fact that we use $|V| - 1$ edges and have no cycles,
+means our set of edges is a single directed path, since a path has exactly one edge
+going out from and one edge going into every vertex in the path, except for the
+first and last vertices. The reasoning behind this is that
+enforcing $|V| - 1$ edges with no cycles (means the edges cover all $|V|$
+vertices with no cycle)
+ensures our set of edges is a single spanning tree if you ignore directions
+(not a bunch of unconnected paths), and intersecting $M_2$
+and $M_3$ makes sure the tree goes in one direction and doesn't branch, making
+it a path. So overall,
+we have that there is a set of edges in the intersection of $M_1,M_2,M_3$ that
+is a Hamilton path in $G$, since we said our set of edges was a single path that
+covered all the vertices. But this is a contradiction. So we have that if there
+is not a Hamilton path in $G = (V,E)$, then there cannot be an independent set
+of cardinality $k = |V| - 1$, and thus that no maps to no.
+
+So we have that yes maps to yes and no maps to no, and thus we are done.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Set 6, Matt Lim}
+Given a graph $G = (V,E)$ and a parameter $k$, we will do the following to
+generate $G' = (V',E')$ and $k'$. We will remove a vertex $v$ such that $deg(v)
+> k$, and all of its incident edges. Then we will decrement $k$, so $k' = k -
+1$. Then we will remove a vertex $v$ such that $deg(v) > k'$. Then we will
+decrement $k'$, so $k'' = k' - 1$. Then we will remove a vertex $v$ such that
+$deg(v) > k''$. We will continue on in this manner, stopping when we no longer
+can remove a vertex, or when $k^n
+= 0$. After this we will remove all vertices of degree zero. This new graph and
+$k^n$ will be our $G'$ and $k'$. If this graph does not meet the constraint that
+$|E'| \leq k'^2$, so $|E'| > k'^2$, then it follows that $G'$ does not have a
+vertex cover of size $k'$. Note that $|V'|
+> 2k'^2 \implies |E'| > k'^2$ since $V' \leq 2E'$, so we can just look at the
+case when the edge constraint doesn't hold. Now, onto explaining why if $|E'| > k'^2$,
+then $G'$ cannot have a vertex cover of size $k'$. This is because our algorithm
+made it so that every vertex $v \in G'$ has a degree less than or equal to $k'$. So no
+combination of $k'$ vertices will cover all the edges, which number greater than
+$k'^2$, because the maximum number of edges possible to cover is $k'^2$. And by the
+iff we will prove below, $G$ does not have a $k$ vertex cover since $G'$ doesn't
+have a $k'$ one.
+So we don't need to run the $O(k^{2k^2} + \text{poly}(n))$ time algorithm for
+this case (which needs the constraints we broke anyways), since we already have
+determined the absence of a size $k$ vertex cover in $G$. This
+procedure is polynomial because every time through, we iterate through at most all the
+vertices to check for a degree greater than the current value of $k$. And we can
+do this order $|V|$ times since we can remove at most $|V|$ vertices.
+
+Now we will show that $G'$ has a vertex cover of size $k'$ iff $G$ has a vertex
+cover of size $k$. First we will show that if $G'$ has a vertex cover of size
+$k'$, then $G$ has a vertex cover of size $k$. To do this, it suffices to show
+that after every step of the algorithm (every removal of a vertex $v$ with
+$deg(v) > k_{current}$), that if the graph has a vertex cover after the
+removal, it has one before. So, let us begin. Let $G$ be the
+current graph and $k$ the current $k$-value. Let $G'$ be the graph after
+removing a vertex $v$ with $deg(v) > k$ and all of its incident edges,
+let $k' = k - 1$,  and let $G'$ have a vertex cover of size $k'$. So going from $G$
+to $G'$ represents one ``step'' of our algorithm. Now, from $G'$, consider adding back $v$
+and all its incident edges. We
+have that $v$ covers all those edges. We also have that $k-1$ vertices covered
+the rest of the edges which were in $G'$, since $G'$ has a vertex cover.
+Thus we have that there is a $k$ size
+vertex cover for $G$. Note that removing all the degree zero vertices at the end
+doesn't matter because they won't be used in the vertex cover.
+
+Now we will show that if $G$ has a vertex cover of size $k$, then $G'$ has a
+vertex cover of size $k'$. To do this, it suffices to show
+that after every step of the algorithm (every removal of a vertex $v$ with
+$deg(v) > k_{current}$), that if the graph had a vertex cover before the
+removal, it has one after. So, let us begin. Let $G$ be the
+current graph and $k$ the current $k$-value, and let $G$ have a vertex
+cover of size $k$. Let $G'$ be the graph after
+removing a vertex $v$ with $deg(v) > k$ and all of its incident edges,
+and let $k' = k - 1$. So going from $G$
+to $G'$ represents one ``step'' of our algorithm. Now, consider the vertex $v$.
+We have that it must be in the vertex cover for $G$, otherwise $deg(v) > k$
+number of vertices would be automatically added to the vertex cover. Then we
+have that there must be a vertex cover for all the edges that $v$ is not
+incident to of size $k - 1$, since there is a vertex cover of size $k$ for the
+entire graph that must include $v$. But this is the same as saying $G'$ has a vertex cover of size
+$k'$. Note that removing all the degree zero vertices at the end doesn't matter
+because they won't be used in the vertex cover.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Set 6, Matt Lim}
+\begin{description}
+    \item[(a)]
+        We will formulate this problem as a linear program as follows:
+        \[ \textbf{maximize } \sum_{p \in P} x_p \]
+        \[ \textbf{such that} \]
+        \[ \sum_{p \in P, \text{ }p \text{ uses } e} x_p \leq 1 \text{ for each edge $e$} \]
+        \[ 0 \leq x_p \leq 1 \text{ for each path $p$} \]
+        We can see that this maximizes the total bandwidth utilized, subject to
+        the constraint that, for each edge $e$, the sum of the $x_p$ over paths
+        that use $e$ is at most 1. This is exactly what the problem wants.
+    \item[(b)]
+        The primal will be of the form:
+        \[ \textbf{maximize } c^Tx \]
+        \[ \textbf{such that} \]
+        \[ Ax \leq b \]
+        \[ x \geq 0 \]
+        $x$ is a vector that has the same number of elements as there are
+        paths that represents how much bandwidth each path uses (column vector
+        with height $|P|$). $A$ has $|E|$ rows and $|P|$ columns, with a one in
+        a cell if an edge is used in a path and a zero if an edge is not used in a path.
+        $b$ is just a column vector of all ones of height $|E|$. $c^T$ is a
+        row vector of all ones of length $|P|$.
+
+        \vspace{5mm}
+
+        The dual will be of the form:
+        \[ \textbf{minimize } y^Tb \]
+        \[ \textbf{such that} \]
+        \[ A^Ty \geq c \]
+        \[ y \geq 0 \]
+        $c$ and $A^T$ are just the transposes of $c^T$ and $A$ (from the
+        primal), respectively, and $b$ is the same as in the primal. We
+        can let $y$ be a column vector of height $|E|$ that has an edge
+        weight $w(e)$ for each edge $e \in E$. Thus, multiplying a row of $A^T$
+        by $y$ gives us the total ``weight'' for the path that row represents,
+        since a row of $A^T$ represents which edges are in that path. Thus we
+        are constraining the total ``weight'' of each path to be greater than or
+        equal to one. Since this puts a constraint on every path, it puts a
+        constraint on the minimum length path.
+    \item[(c)]
+        To implement a separation oracle given a purported solution, the
+        solution being the weighting for each edge ($y$), one must simply run Dijkstra's on $G$
+        with the purported edge weights
+        to find the weight of the shortest path. If this weight is greater than
+        or equal to one, we can see that all the constraints are satisfied,
+        since this means all paths will have weight greater than or equal to
+        one. If this weight is less than one, we have a violated constraint for
+        the shortest path. So either we verify all the constraints are satisfied
+        or return a violated constraint. And we proved in lecture that
+        Dijkstra's is polynomial.
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\end{document}

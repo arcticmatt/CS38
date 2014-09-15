@@ -1,0 +1,418 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage,enumitem}
+\usepackage[a4paper,bindingoffset=0in,left=1in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\pagenumbering{gobble}
+\newcommand{\modifyenum}[1]{%
+  \end{enumerate}
+  \begin{enumerate}[resume,#1]
+}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 1
+\section*{Problem 1, CS38 Final, Matt Lim}
+The greedy algorithm will be as follows. At each step, we will pick the set
+covering the largest number of remaining uncovered items. Now, we will show that
+this achieves an approximation ratio of $\frac{e}{e-1}$.
+
+Let $OPT$ be the cardinality of the set of elements covered by a
+\textit{maximum k-cover} - that is, the cardinality of the set
+with the maximum number of elements of $U$ that can be covered by $k$ of the
+subsets. Let $r_i$ be the number of the $OPT$ elements remaining (not yet
+covered) after iteration $i$; that is, if $x$ elements have been covered after
+iteration $j$, then $r_j = OPT - x$. This means $r_0 = OPT$. Then we claim that
+\[ r_i \leq (1 - \frac{1}{k}) \cdot r_{i-1}. \]
+The proof for this statement is as follows. We have
+that $k$ subsets cover $OPT$ elements. Then, at each step, $k$ subsets cover
+all remaining elements (out of the $OPT$ elements, not the universe).
+Thus, at each step, \textit{some} subset must cover at least a $\frac{1}{k}$
+fraction of those remaining elements out of the $OPT$ elements. That is, at
+each step, there
+must exist some subset that covers a fraction $\frac{1}{k}$ (at least) of the $r_{i-1}$
+elements remaining to be covered. This basically means we can cover at least
+$\frac{r_{i-1}}{k}$ uncovered elements at each step $i$. And since our
+greedy algorithm picks the set covering the largest number of remaining
+uncovered items, we will cover at least $\frac{r_{i-1}}{k}$ uncovered remaining
+elements at each step $i$. Then, using this claim, we have that
+\[ r_i \leq (1 - \frac{1}{k})^i \cdot OPT \]
+\[ r_k \leq (1 - \frac{1}{k})^k \cdot OPT \]
+\[ r_k \leq \frac{OPT}{e} \text{ (since } (1-\frac{1}{x})^x \leq \frac{1}{e})\]
+So we have that, after $k$ iterations of our algorithm (which means we have
+picked $k$ sets) there are less than or equal to $\frac{OPT}{e}$ elements
+remaining of the $OPT$ number of elements that are possible to be covered with
+$k$ subsets. This means that $c$, the number of elements we have
+covered out of the $OPT$ possible, is bounded below as follows:
+\[ c \geq OPT - \frac{OPT}{e} \]
+\[ c \geq OPT(1 - \frac{1}{e}) \]
+\[ c \geq OPT(\frac{e-1}{e}) \]
+\[ c(\frac{e}{e-1}) \geq OPT \]
+Thus we get our approximation ratio of $\frac{e}{e-1}$.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 2
+\section*{Problem 2, CS38 Final, Matt Lim}
+Here is our algorithm. Note that a ``child edge'' $(u,w)$ of a vertex $u$ is an edge
+that goes from $u$ to one of its children $w$.
+
+\vspace{5mm}
+
+\textbf{Maximum-matching-tree}$(\text{tree } G = (V,E))$
+\begin{enumerate}
+    \item Root the tree $G$ at a node $r$
+    \item $S = \varnothing$
+    \item int $min = \infty$
+    \item $OPT_{in}[v] = OPT_{out}[v] = 0$ for all $v \in V$
+    \item \textbf{foreach} node $u$ of $G$ in postorder
+    \modifyenum{leftmargin=50pt}
+    \item \textbf{if} $u$ is not a leaf
+    \modifyenum{leftmargin=75pt}
+    \item \textbf{foreach} child edge $(u,w)$
+    \modifyenum{leftmargin=100pt}
+    \item \textbf{if} $OPT_{in}[w] - OPT_{out}[w] < min$
+    \modifyenum{leftmargin=125pt}
+    \item $min = OPT_{in}[w] - OPT_{out}[w]$
+    \item node $k = w$
+    \modifyenum{leftmargin=75pt}
+    \item $OPT_{in}[u] = 1 + OPT_{out}[k] + \sum_{v \in children(u), v \neq k}
+    max\{OPT_{out}[v], OPT_{in}[v]\}$
+    \item Store the following information in
+        $B_{in}[u]$: edge $e = (u,k)$; for all children $v$ of $u$ (except $k$),
+        if $OPT_{out}[v] \geq OPT_{in}[v]$ store $B_{out}[v]$ and
+        if $OPT_{out}[v] < OPT_{in}[v]$ store $B_{in}[v]$; for $k$, store
+        $B_{out}[k]$
+    \modifyenum{leftmargin=75pt}
+    \item $OPT_{out}[u] =
+        \sum_{v \in \text{children($u$)}} max\{OPT_{in}[v], OPT_{out}[v]$\}
+    \modifyenum{leftmargin=75pt}
+    \item Store the following information in
+        $B_{out}[u]$: for all children $v$ of $u$,
+        if $OPT_{out}[v] \geq OPT_{in}[v]$ store $B_{out}[v]$ and
+        if $OPT_{out}[v] < OPT_{in}[v]$ store $B_{in}[v]$
+    \item $min = \infty$
+    \modifyenum{leftmargin=25pt}
+    \item \textbf{if} $OPT_{in}[r] > OPT_{out}[r]$
+    \modifyenum{leftmargin=50pt}
+    \item Backtrack starting with $B_{in}[r]$; for
+        each $B_{in}[x]$ encountered, add the stored edge $e$ to $S$
+    \modifyenum{leftmargin=25pt}
+    \item \textbf{else}
+    \modifyenum{leftmargin=50pt}
+    \item Backtrack starting with $B_{out}[r]$; for each $B_{in}[x]$ encountered,
+        add the stored edge $e$ to $S$
+    \modifyenum{leftmargin=25pt}
+    \item return $S$
+\end{enumerate}
+
+\vspace{5mm}
+Note that these following sections depend on the fact that $G$ is a tree.
+
+We will now show that our algorithm runs in time $O(|E|)$ operations, where an
+operation is as defined in the problem. We will assume that $|E| \geq |V|$
+(otherwise just reading in the graph would be greater than $O(|E|)$).
+First we iterate through all the nodes in line 4,
+of which their are order $|E|$ many of, and set some values. This is clearly
+within the time bounds. Then, with the combined for-loops of lines 5 and 7, we
+iterate through every edge in the graph and set/compare some variables for each
+edge. This is also clearly within the time bounds. Then we can see that in lines 11
+and 13, we perform a sum for each non-leaf node. For each node, these sums sum
+over its child edges. Thus, overall, each of these sums ends up summing $O(|E|)$
+many elements, each of which are of magnitude $O(|E|)$ (since the value of any
+$OPT$ value is bounded by the total number of edges). So, the time it takes to do
+both of these sums is $O(|E|)$ operations. Next, we have that in lines 12 and 14
+we store values from those sums; thus, since we showed the sums are $O(|E|)$, so
+are these lines (overall, each set of $B$ values - $B_{in}$s and $B_{out}$s -
+stores information about every vertex,
+and storing each thing takes constant time since at most we need to compare two
+values to store something). Finally, the backtracking at the end just goes through all the $B$ values for
+each node and sometimes adds edges to $S$, which is clearly $O(|E|)$ (since this
+means we backtrack through the $B$ values of all the nodes, of which there are
+order $|E|$ many). Thus this algorithm
+runs in time $O(|E|)$ operations.
+
+Now we will show that our algorithm works. We can see that we visit the nodes in
+postorder. This is to ensure a node is visited after all its children. For each
+node $u$, we consider the optimal score of adding a child edge $e$ of $u$
+to the matching and the optimal score if we don't add any of its child
+edges to the matching. The former part occurs in lines 7-11. We choose to add
+the edge between $u$ and the child vertex $w$ such that $OPT_{in}[w] -
+OPT_{out}[w]$ is minimized.
+This is to minimize the loss of score when adding that edge to the
+matching, which is the same as maximizing the score of the matching.
+The latter part occurs in line 13, where we calculate the maximum score of when
+we don't include any of $u$'s child edges in the matching. In this way, we
+compute the value of a maximum matching for the subtrees rooted at each node (it
+will be the maximum of $OPT_{in}$ and $OPT_{out}$).
+Thus, we compute the value of a maximum matching for a tree rooted at $r$, which
+is just the value of the maximum matching for the whole tree. Now we must
+explain why our backtracking works. We have that, for each node $u$, we store
+$B_{in}[u]$ and $B_{out}[u]$. $B_{in}[u]$ contains the optimal child edge
+$(u,w)$ of $u$ to add to the matching, and the optimal in/out choice for all child vertices of
+$u$ (for $w$, the choice is by default ``out'') stored as $B$ values. $B_{out}[u]$ contains the
+optimal in/out choice for all child vertices of $u$ stored as $B$ values. Thus, when starting from the
+root node $r$, we have the optimal choices (depending on whether or not we
+include a child edge of $r$) for all its child vertices contained
+in $B_{in}[r]$ and $B_{out}[r]$. Then, we know which one is better to start with from the values
+of $OPT_{in}[r]$ and $OPT_{out}[r]$. Once we pick the correct $B$ to start with,
+it is clear that we can continue optimally down to the bottom of the
+tree; at each level, we have the $B$ values for all its nodes
+(obtained from the previous level, unless we are at the top level),
+from which we know the optimal choices/$B$
+values for the next level. And since we add the $e$ values stored by $B_{in}$'s,
+which we know are optimal, we get the maximum matching.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 3, CS38 Final, Matt Lim}
+Here is the pseudo-code of our algorithm to find a maximum sum subsequence. Note
+that it does not use divide-and-conquer; \textbf{I asked Professor Umans and he said it
+is OK as long as it runs in the desired time bounds.} Let the size of the
+list be $n$, and let $L_k$ denote the $k$th element of the list.
+Note that we will let the ``value'' of a list be the sum of its elements.
+
+\vspace{5mm}
+
+\textbf{Maximum-sum-subsequence}(List $L$)
+\begin{enumerate}
+    \item check if $L$ is all non-positive elements by iterating through every
+        element. While iterating through, keep track of the maximum element's index.
+        If $L$ is all non-positive elements, return index of maximum element.
+    \item int $curr = max = 0$
+    \item int $begin = end = beginMax = endMax = 1$
+    \item \textbf{for} $1 \leq k \leq n$
+    {\setlength\itemindent{25pt} \item \textbf{if} $curr + L_k > max$ }
+    {\setlength\itemindent{50pt} \item $max = curr + L_k$ }
+    {\setlength\itemindent{50pt} \item $curr = curr + L_k$ }
+    {\setlength\itemindent{50pt} \item $beginMax = begin$ }
+    {\setlength\itemindent{50pt} \item $endMax = k$ }
+    {\setlength\itemindent{25pt} \item \textbf{elif} $curr + L_k > 0$ }
+    {\setlength\itemindent{50pt} \item $curr = curr + L_k$ }
+    {\setlength\itemindent{25pt} \item \textbf{else} }
+    {\setlength\itemindent{50pt} \item $curr = 0$ }
+    {\setlength\itemindent{50pt} \item $begin = end = k+1$ }
+    \item return $beginMax, endMax$
+\end{enumerate}
+
+\vspace{5mm}
+We will now see why this runs in the desired time bounds. We have that step 1
+takes $O(n)$ operations, as it just iterates through the list. Then, the rest of
+the algorithm is basically just a for-loop that iterates through all $n$
+elements of the list. In the for-loop, we are just adding integers of
+magnitude $O(n|\text{max$_i a_i$}|)$, comparing values, and/or setting integer values.
+And in each iteration of the loop, the number of these operations that happen is
+clearly bounded by a constant. So we have that overall, our algorithm only takes
+$O(n)$ operations, which meets the desired bound of $O(n\log n)$ operations.
+
+Now we will explain why this algorithm works. The first line takes care of lists
+that have no positive values by simply returning the maximum value. Otherwise,
+we do the following. We start from the
+beginning and iterate through the whole list. We keep track of the starting and
+ending indices of the current subsequence ($begin,end$), the starting and ending
+indices of the current maximum subsequence ($beginMax,endMax$), and the values
+for the current subsequence and the maximum subsequence ($curr,max$). For every element, we add its
+value to $curr$. Let the element we are considering be called $L_k$.
+So, we will add that element to $curr$ to get $sum = curr + L_k$. If $sum$ is
+greater than $max$, we set the current subsequence to be the maximum. If it is
+not greater than $max$ but greater than $0$, we maintain our current
+subsequence. Else, if $sum$ is less than or equal to $0$, we start a new
+subsequence on the next element. We do this because once the value of a current
+subsequence is non-positive, we know that it is better or the same to start a new
+subsequence on the next element than to continue on with the current one, as
+non-positive values do not help the sum. So overall, our algorithm considers
+a subsequence until its value becomes non-positive (keeping track of the
+maximum along the way), and when its value does become non-positive, it
+considers a new subsequence starting on the next element. Thus, our algorithm
+only elongates the current subsequence if it is possible that it is an essential
+part of the maximum (that it actually adds to the value), all while keeping track of
+the current maximum subsequence
+- otherwise, it starts a new one, since extending the previous one cannot help.
+In other words, we never make an outright bad move, only moves that are or have
+the possibility of being beneficial. And if we make a possibly beneficial move
+that hurts the current value, like adding a negative to our subsequence, we have
+stored the value of the max before that move. Thus, overall, our algorithm keeps
+track of how high a value a subsequence can have until its value hits zero or
+less, then starts again on the next element.
+So clearly, since we run this algorithm starting at the beginning of the list,
+it will not miss finding a maximum sum subsequence.
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\section*{Problem 4, CS38 Final, Matt Lim}
+\begin{description}
+    \item[(a)] Given the LP, our constraint matrix $A$ will be as follows. Letting
+        $|V| = n$ and $|E| = m$, we have that our constraint matrix $A$ will
+        have $2m - 2$ rows and $m + n$ columns. The first $2m$ rows will represent the $m$
+        edges twice (first $m$ rows will be $e_1, \dots, e_m$, next $m$ rows
+        will be $e_1, \dots, e_m$ again), and the last two rows will be for the middle two
+        constraints. The first $m$ columns will represent edges as well, and the
+        last $n$ columns will represent all the vertices. Looking at a
+        row in the first $m$ rows that represents edge $e_i = (u,v)$, there will be a $1$ in the
+        column that also represents edge $e_i$. Also, there will be a $-1$ in
+        the column that represents vertex $u$, and a $1$ in the column that
+        represents vertex $v$. All other columns in that row will have a $0$.
+        Looking at a row in the second set of $m$ rows that
+        represents edge $e_i = (u,v)$, there will be a $1$ in the
+        column that also represents edge $e_i$ and $0$s everywhere else.
+        Finally, the first row in the last two rows will have a $1$ in the column that
+        represents vertex $s$ and the second row will have a $1$ in the column
+        that represents vertex $t$. We can then see that multiplying this by the
+        vector $x_1, \dots, x_m, y_1, \dots, y_v$ and having a vector $c$ that
+        constrains the results of the first $2m$ rows to be greater than or
+        equal to $0$, the result of the second to last row to be equal to $1$,
+        and the result of the last row to be equal to $0$ (where a ``result'' is the
+        number you get by multiplying a row of $A$ by $x$) gives us all our
+        constraints. We will now prove that $A$ is unimodular.
+
+        Now we will prove by induction that $A$ is unimodular. To do this we
+        will prove that every square submatrix of $A$ has determinant $0$, $1$,
+        or $-1$.
+        First we will consider the base case. So, consider any submatrix of $A$
+        that has dimensions $1 \times 1$. We showed above that every cell of $A$
+        is either $0$, $1$, or $-1$. And since the determinant of a $1 \times 1$
+        matrix is just the value of the cell, we have that every $1 \times 1$
+        submatrix of $A$ has determinant $0$, $1$, or $-1$. Now we will do our inductive
+        assumption. So, assume that every $k \times k$ submatrix of
+        $A$, where $1 \le k \le i - 1$ has determinant $0$, $1$, or $-1$.
+        Now we must show that every $i \times i$ submatrix of
+        $A$ has such a determinant. So consider an arbitrary $i \times i$
+        submatrix $B$ of $A$.
+
+        Now we will consider four cases. The first case is when a column $c$ in
+        $B$ is made of all
+        zeroes. Then we have that the determinant of $B$ is zero (expand by
+        cofactors along $c$). The second case is
+        when a column $c$ in $B$ has one $1$ or one $-1$ and $0$s everywhere else.
+        Here we have that the determinant of $B$ is either $0$, $1$,
+        or $-1$. We can see this is true if we expand by cofactors along $c$.
+        This is because by calculating the determinant this way, it is the same
+        as if we calculate the determinant of the $(i - 1) \times (i - 1)$
+        matrix we get by crossing out column $c$ and the row with the one $1/-1$ in
+        column $c$ and multiplying it by $1$ or $-1$. And by our inductive
+        assumption, the determinant of such a $(i - 1) \times (i - 1)$ matrix is
+        $0$, $1$, or $-1$. So clearly the determinant of $B$ is $0$, $1$, or
+        $-1$.
+        Similarly to the first two cases, we
+        have a third case in which one row of $B$ is made of all $0$s and a
+        fourth case in which one row of $B$ is made of all $0$s and one
+        $1$ or $-1$. These cases are proved true in the same way as the first
+        two cases, except that instead of expanding along a column we expand
+        along a row.
+        Note that these first two cases cover every square submatrix that has a
+        column from the first $m$ columns of $A$, since all those columns only
+        have one $1$ (since we don't include the same edge twice). Thus, when we
+        take a submatrix that includes one of those columns, the corresponding
+        column in the submatrix will have at most one $1$.
+
+        The next cases cover submatrices that only take columns from the last
+        $n$ columns of $A$, since, as we noted above, the first two cases cover
+        all cases when a column from the first $m$ columns of $A$ is included.
+        So, we get the following cases. Similarly to the first two cases, we
+        have a third case in which one row of $B$ is made of all $0$s and a
+        fourth case in which one row of $B$ is made of all $0$s and one
+        $1$ or $-1$. These cases are proved true in the same way as the first
+        two cases, except that instead of expanding along a column we expand
+        along a row. Then, we have a final fifth case, in which every row of $B$ has
+        both one $1$ and one $-1$ and every column has at least 2 non-zero
+        values. Note that we never get a case where there are
+        two $1$s and one $-1$ in a row, because that would involve including a
+        column from the first $m$ columns (a case which we already took care of).
+        We will now claim that in this case, it is possible to make a row of
+        all zeroes by adding multiples of rows to other rows. We
+        can see this is true because of the following reason. Since we have two
+        non-zero values in each column (two $1$s, two $-1$s, or
+        one $1$ and one $-1$) and exactly one $1$ and one $-1$ in each row,
+        we can do the following. Let us add rows to the
+        first row. Then, we can just keep on adding/subtracting rows, getting rid of one
+        stays 0, since we are adding a $1$ and subtracting a $1$ either
+        way. Therefore, the first row will eventually become all $0$s,
+        since we have two non-zero values in each column that we can have cancel
+        and we can always keep the value of the first row at $0$.
+        For an example, see the following:
+        \[
+        \begin{bmatrix}
+        -1 & 1 & 0 & 0\\
+        -1 & 0 & 1 & 0\\
+         0 & -1 & 0 & 1\\
+         0 & 0 & -1 & 1
+        \end{bmatrix} \rightarrow
+        \begin{bmatrix}
+         0 & 1 & -1 & 0\\
+        -1 & 0 & 1 & 0\\
+         0 & -1 & 0 & 1\\
+         0 & 0 & -1 & 1
+        \end{bmatrix} \rightarrow
+        \begin{bmatrix}
+         0 & 0 & -1 & 1\\
+        -1 & 0 & 1 & 0\\
+         0 & -1 & 0 & 1\\
+         0 & 0 & -1 & 1
+        \end{bmatrix} \rightarrow
+        \begin{bmatrix}
+         0 & 0 & 0 & 0\\
+        -1 & 0 & 1 & 0\\
+         0 & -1 & 0 & 1\\
+         0 & 0 & -1 & 1
+        \end{bmatrix}
+        \]
+        First we subtract the second row, then we add the third row, then we
+        subtract the fourth row. We can see that, since we have two $\pm1$s in
+        each column and exactly one $1$ and one $-1$ in each row,
+        we can just cancel all of them out in the first row.
+        So, we have that it is possible to make a row of all zeroes by adding
+        multiples of rows to other rows. Note now that it is a theorem of linear
+        algebra that the determinant of a square matrix is unchanged if the
+        entries in one row are added to those in another row (page 1224 CLRS).
+        Then, since we have a row of all zeroes, we can expand along this row
+        and get that the determinant of $B$ is $0$. So for this case, the determinant
+        is $0$. Now we have that all the cases are covered. Thus, we can
+        conclude by induction that every square submatrix of $A$ has determinant
+        $0$, $1$, or $-1$, and thus that $A$ is totally unimodular.
+    \item[(b)] First, we will show that the dual LP of this given LP is the
+        max-flow LP, and that its maximum value is the value of the max flow.
+        So, given our LP, we can say the following. We already defined $A^T$.
+        Now we have that $y$ is a column vector of height $|E| + |V|$ that just contains the edge
+        variables ($x_e$s) and the vertex variables ($y_v$s), in that order. We
+        have that $c$ is a column vector of height $|E|$ that contains a $1$ for
+        each edge that goes out from $s$ and $0$ everywhere else. Finally, we
+        have that $b$ is a column vector of height $|E| + |V|$ that contains all
+        the edge capacities, then all $0$s, in that order. Turning this into the
+        dual gives us the following. We have that $A$ has $|E| + |V|$ rows and
+        $|E|$ columns. The columns represent edges. The first $|E|$ rows also
+        represent edges - each row will be all $0$s, except for one $1$ in the
+        column that represents the same edge as the row. Then the next $|V|$
+        rows will represent vertices. Each row will have a $-1$ for each edge
+        going out from it and a $1$ for each edge going into it. So, that is
+        $A$. We can have $x$ be a column vector of height $|E|$ indicating how
+        much flow is sent through each edge. $b$ is just the same as in the
+        dual, as is $c$. Now we must show that this LP gives us the value of the
+        max-flow. Clearly, we maximize the right thing, as $c^T x$ is the sum of
+        the flows coming out from the source vertex $s$. Then we can see that
+        constraining $Ax \leq b$ gives us the right constraints: it makes sure
+        flows don't exceed capacities for every edge (top $|E|$ rows of $A$
+        times $x$), that the flow into a vertex equals
+        the flow out of a vertex for every vertex (bottom $|V|$ rows of $A$ times
+        $x$), and that all the flows are positive. Thus,
+        we have shown that the dual of the given LP is the max-flow LP, and that
+        the value the max-flow LP gives us is indeed the value of the max flow.
+
+        Now we can use what we just proved in the following way. We have that
+        the minimum/optimum value given by this LP equals the maximum value
+        given by the max-flow LP (which is just the value of the max-flow).
+        This is by the strong duality theorem given in lecture 15, slide 49. We can apply
+        this because $A/A^T$ and $c$ are
+        real-valued ($A/A^T$ is made of $0$s and $\pm1$s and $c$ is made of
+        $0$s and $1$s). $b$ is also clearly real valued, as we have integer
+        capacities for each edge. And clearly the dual and primal are nonempty.
+        Therefore we have that the optimum value of this LP equals the value of the max-flow.
+        Then, by the max-flow min-cut theorem, the value of the max-flow equals the
+        capacity of the min-cut. Thus we have that the optimum value of this LP equals
+        the value of the min-cut.
+\end{description}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem 3
+\end{document}
